@@ -1,0 +1,23 @@
+<!-- task_details.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Details</title>
+</head>
+<body>
+
+<h1>Task Details</h1>
+
+<h2>{{ task.task_title }}</h2>
+<p><strong>Description:</strong> {{ task.task_description }}</p>
+<p><strong>Priority:</strong> {{ task.get_task_priority_display }}</p>
+<p><strong>Start Date:</strong> {{ task.start_date }}</p>
+<p><strong>End Date:</strong> {{ task.end_date }}</p>
+<p><strong>Task Type:</strong> {{ task.get_task_type_display }}</p>
+
+<a href="{% url 'dashboard' %}">Back to Dashboard</a>
+
+</body>
+</html>

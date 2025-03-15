@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Dashboard</title>
+    <style>
+        /* CSS to display form and task statistics side by side */
+        .container {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .form-container {
+            margin-left: 200px;
+        }
+
+        .stats-container {
+            margin-left: 10px;
+        }
+
+        /* Style for buttons */
+        button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .create-task-btn button {
+            background-color: blue;
+            color: white;
+            font-weight: bold;
+        }
+
+        .mark-completed-btn button {
+            background-color: green;
+            color: white;
+        }
+
+        .see-btn button {
+            background-color: hsl(208, 100%, 50%);
+            color: white;
+        }
+
+        .edit-btn {
+            background-color: orange;
+            color: white;
+            text-decoration: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+
+        .delete-btn {
+            background-color: red;
+            color: white;
+            text-decoration: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        /* Styling for task status */
+        .completed-task {
+            color: green;
+        }
+
+        .pending-task {
+            color: yellow;
+        }
+
+        .in-progress-task {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+
+<a href="{% url 'create_task' %}" class="create-task-btn">
+    <button type="button">Create New Task</button>
+</a>
+<a href="{% url 'Leave_Management' %}" class="create-task-btn">
+    <button type="button">Leave Management</button> 
+</a>
+
+<!-- Performance Review Button -->
+<a href="{% url 'performance_review' %}" class="create-task-btn">
+    <button type="button">Performance Review</button> 
+</a>
+
+<!-- Task Filters -->
+<br><br>
+
+<!-- Task List Table -->
+<table border="1">
+    <thead>
+        <tr>
+            <th>Sr. No</th>
+            <th>Employee Name</th>
+            <th>Task Title</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+            <th>See Details</th>  
+            <th>Status</th>
+            <th>Actions</th>
+            <th>Edit</th>
+            <th>Delete</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for task_assignment in tasks %}
+        <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ task_assignment.employee.username }}</td>
+            <td>{{ task_assignment.task.task_title }}</td>
+            <td>{{ task_assignment.task.start_date }}</td>
+            <td>{{ task_assignment.task.end_date }}</td>
+            <td>
+                <a href="{% url 'task_details' task_assignment.task.id %}" class="see-btn">
+                    <button type="button">See Details</button>
+                </a>
+            </td>
+            <!-- Add CSS classes based on task status -->
+            <td class="{% if task_assignment.status == 'Completed' %}completed-task{% elif task_assignment.status == 'Pending' %}pending-task{% else %}in-progress-task{% endif %}">
+                {{ task_assignment.status }}
+            </td>
+            <td>
+                <a href="{% url 'mark_as_completed' task_assignment.id %}" class="mark-completed-btn">
+                    <button type="button">Mark as Completed</button>
+                </a>
+            </td>
+            <td>
+                <a href="{% url 'update_task' task_assignment.task.id %}" class="edit-btn">Edit</a>
+            </td>
+            <td>
+                <a href="{% url 'delete_task' task_assignment.task.id %}" class="delete-btn">Delete</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="10">No tasks found</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<br>
+
+<!-- Container to hold form and statistics side by side -->
+<div class="container">
+    <label for="employee">Filter by Employee:</label>
+    <select name="employee" id="employee"><br>
+        <option value="">Select Employee</option>
+        {% for employee in employees %}
+        <option value="{{ employee.id }}" {% if employee.id == request.GET.employee %}selected{% endif %}>{{ employee.username }}</option>
+        {% endfor %}
+    </select>
+    <label for="status">Filter by Status:</label>
+    <select name="status" id="status">
+        <option value="">Select Status</option>
+        <option value="Pending" {% if 'Pending' == request.GET.status %}selected{% endif %}>Pending</option>
+        <option value="In Progress" {% if 'In Progress' == request.GET.status %}selected{% endif %}>In Progress</option>
+        <option value="Completed" {% if 'Completed' == request.GET.status %}selected{% endif %}>Completed</option>
+    </select>
+
+    <!-- Task Filters Form -->
+    <div class="form-container">
+        <form method="get">
+            <label for="status">Filter between data range</label><br>
+            <label for="from">From Date:</label>
+            <input type="date" name="from" value="{{ request.GET.from }}">
+            <br>
+            <label for="to">To Date:</label>
+            <input type="date" name="to" value="{{ request.GET.to }}">
+            <br>
+            <button type="submit">Apply Filters</button>
+        </form>
+    </div>
+
+    <!-- Task Statistics -->
+    <div class="stats-container">
+        <h2 class="total-task">Total Tasks: {{ total_tasks }}</h2>
+        <ul>
+            <li class="completed-task">Completed Tasks: {{ completed_tasks }}</li>
+            <li class="pending-task">Pending Tasks: {{ pending_tasks }}</li>
+            <li class="in-progress-task">In Progress Tasks: {{ in_progress_tasks }}</li>
+        </ul>
+    </div>
+</div>
+
+</body>
+</html>

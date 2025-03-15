@@ -1,0 +1,23 @@
+<!-- leave_management.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leave Management</title>
+</head>
+<body>
+
+<h1>Leave Management</h1>
+
+<!-- Loop through leave requests passed from the view -->
+<ul>
+    {% for leave_request in leave_requests %}
+        <li>{{ leave_request.employee.name }} - {{ leave_request.leave_type }} - {{ leave_request.status }}</li>
+    {% empty %}
+        <li>No leave requests found.</li>
+    {% endfor %}
+</ul>
+
+</body>
+</html>

@@ -1,0 +1,23 @@
+<!-- performance_review.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Performance Review</title>
+</head>
+<body>
+
+<h1>Performance Review</h1>
+
+<!-- Loop through performance reviews passed from the view -->
+<ul>
+    {% for review in reviews %}
+        <li>{{ review.employee.name }} - {{ review.performance_score }} - {{ review.review_date }}</li>
+    {% empty %}
+        <li>No performance reviews found.</li>
+    {% endfor %}
+</ul>
+
+</body>
+</html>
